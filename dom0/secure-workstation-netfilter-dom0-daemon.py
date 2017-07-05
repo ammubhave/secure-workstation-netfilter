@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # import os
-import struct
+# import struct
 import socket
 import subprocess
 import sys
@@ -12,15 +12,14 @@ PORT = 10293
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 # s.sendall(os.environ['QREXEC_REMOTE_DOMAIN'] + '\n')
-srcip, dstip = sys.stdin.read().strip().split()
+srcip, dst = sys.stdin.read().strip().split()
 
 
-def int2ip(addr):
-    return socket.inet_ntoa(struct.pack("!I", addr))
+# def int2ip(addr):
+#     return socket.inet_ntoa(struct.pack("!I", addr))
 
 
-srcip = int2ip(int(srcip))
-dstip = int2ip(int(dstip))
+# srcip = int2ip(int(srcip))
 
 vmname = "<none>"
 for line in subprocess.check_output(['/usr/bin/qvm-ls',
@@ -29,10 +28,7 @@ for line in subprocess.check_output(['/usr/bin/qvm-ls',
     if ip == srcip:
         vmname = name
         break
-s.sendall('%s %s\x00' % (vmname, dstip))
+s.sendall('%s %s\x00' % (vmname, dst))
 b = s.recv(1)
-if ord(b) == 1:
-    print("Accept")
-else:
-    print("Deny")
+print(ord(b))
 s.close()
